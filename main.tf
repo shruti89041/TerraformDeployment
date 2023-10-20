@@ -34,24 +34,26 @@ resource "aws_lambda_function" "example_lambda" {
   depends_on = [aws_iam_role.lambda_exec_role]
 }
 
-# Step 3: Nexus to S3 Data Transfer Modules
+# Step 3: Nexus to S3 Download Module
+module "nexus_s3_download" {
+  source = "./nexus_s3_download_module"
+
+  aws_region   = "us-east-1"
+  nexus_url    = "https://your-nexus-url/your-file.zip"
+  local_path   = "/path/to/local/downloaded/file.zip"
+}
+
+# Step 4: Nexus to S3 Upload Module
 module "nexus_s3_upload" {
   source = "./nexus_s3_upload_module"
 
   aws_region       = "us-east-1"
-  nexus_url        = "https://your-nexus-url/your-file.zip"
   s3_bucket        = "your-s3-bucket-name"
   s3_object_prefix = "your/object/key/prefix/file.zip"
+  local_path       = module.nexus_s3_download.local_path
 }
 
-module "nexus_s3_download" {
-  source = "./nexus_s3_download_module"
-
-  # Define input variables for the download module as needed
-  # ...
-}
-
-# Step 4: AWS Kinesis Section
+# Step 5: AWS Kinesis Section (Optional)
 resource "aws_kinesis_stream" "example_stream" {
   name        = "example-stream"
   shard_count = 1
@@ -67,4 +69,3 @@ output "s3_bucket_name" {
 output "s3_object_key" {
   value = module.nexus_s3_upload.s3_object_key
 }
-
