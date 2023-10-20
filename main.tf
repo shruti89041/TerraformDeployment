@@ -73,16 +73,15 @@ module "nexus_s3_download" {
   local_path   = "/path/to/local/downloaded/file.zip" //s3 folder
 }
 
-# Step 4: Nexus to S3 Upload Module
-module "nexus_s3_upload" {
-  source = "./nexus_s3_upload_module"
+resource "aws_s3_bucket_object" "nexus_to_s3_upload" {
+  bucket = "your-s3-bucket-name"  # S3 bucket name
+  key    = "your/object/key-prefix/ics.zip"  # Object key in S3
 
-  aws_region       = "us-east-1"
-  s3_bucket        = "your-s3-bucket-name"  # S3 bucket name
-  s3_object_prefix = "s3://my-bucket/my-folder/my-file.txt" # Object key prefix in S3
-  local_path       = module.nexus_s3_download.local_path
+  source = "https://your-nexus-url/ics.zip"  # Nexus file URL
+
+  # ACL can be configured according to your requirements
+  # acl = "private"
 }
-
 # Step 5: AWS Kinesis Section (Optional)
 resource "aws_kinesis_stream" "example_stream" {
   name        = "example-stream"
