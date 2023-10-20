@@ -40,7 +40,7 @@ resource "aws_s3_bucket_policy" "public_read_policy" {
         Principal = "*",
         Action    = "s3:GetObject",
                     "s3:PutObject"
-        Resource  = aws_s3_bucket.example_bucket.arn
+        Resource  = "arn:aws:s3:::bucketname/*
         Condition = {
           StringEquals = {
             "s3:ExistingObjectTag/allow-public-read" = "true"
