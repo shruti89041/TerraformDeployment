@@ -1,6 +1,3 @@
-provider "aws" {
-  region = "us-east-1"
-}
 
 # Step 1: IAM Role Section
 resource "aws_iam_role" "lambda_exec_role" {
