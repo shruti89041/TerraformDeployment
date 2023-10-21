@@ -36,7 +36,8 @@ resource "aws_lambda_function" "example_lambda" {
   runtime      = "java17"  # Runtime: Java 17
   memory_size  = 512       # Memory: 512 MB
   timeout      = 900       # Timeout: 15 minutes (900 seconds)
-
+  
+  role = aws_iam_role.lambda_exec_role.arn
   # Layers
   layers = [
     "arn:aws:lambda:us-east-1:123456789012:layer:em-thirdparty-layer:12",
@@ -73,4 +74,12 @@ resource "aws_s3_bucket_object" "nexus_to_s3_upload" {
 
   # ACL can be configured according to your requirements
   # acl = "private"
+}
+
+resource "aws_lambda_event_source_mapping" "kinesis_trigger" {
+  event_source_arn  = aws_kinesis_stream.example_stream.arn
+  function_name     = aws_lambda_function.example_lambda.function_name
+  enabled           = true
+  batch_size        = 100
+  starting_position = "LATEST"
 }
