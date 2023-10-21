@@ -22,9 +22,11 @@ resource "aws_iam_role" "lambda_exec_role" {
 resource "aws_kinesis_stream" "example_stream" {
   name        = "example-stream"
   shard_count = 1
+  retention_period = 48
 
-  # Configure the Kinesis stream as needed
-  # ...
+  stream_mode_details {
+    stream_mode = "PROVISIONED"
+  }
 }
 
 
