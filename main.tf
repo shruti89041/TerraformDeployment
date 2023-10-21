@@ -19,58 +19,48 @@ resource "aws_iam_role" "lambda_exec_role" {
   # ...
 }
 
+resource "aws_kinesis_stream" "example_stream" {
+  name        = "example-stream"
+  shard_count = 1
 
-resource "aws_s3_bucket" "example_bucket" {
-  bucket = "your-bucket-name"
-  acl    = "public-read-write" # By default, set the ACL to private
-
-  # Additional bucket configurations as needed
-}
-
-# Step 2: Define an S3 Bucket Policy
-resource "aws_s3_bucket_policy" "public_read_policy" {
-  bucket = aws_s3_bucket.example_bucket.id
-
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Sid       = "PublicRead",
-        Effect    = "Allow",
-        Principal = "*",
-        Action    = "s3:GetObject",
-                    "s3:PutObject"
-        Resource  = "arn:aws:s3:::bucketname/*
-        Condition = {
-          StringEquals = {
-            "s3:ExistingObjectTag/allow-public-read" = "true"
-          }
-        }
-      }
-    ]
-  })
-}
-# Step 2: AWS Lambda Section
-resource "aws_lambda_function" "example_lambda" {
-  function_name = "example-lambda"
-  handler      = "index.handler"
-  runtime      = "nodejs14.x"
-
-  role = aws_iam_role.lambda_exec_role.arn
-
-  # Define Lambda function's deployment package, environment, and other configurations
+  # Configure the Kinesis stream as needed
   # ...
-
-  depends_on = [aws_iam_role.lambda_exec_role]
 }
 
-# Step 3: Nexus to S3 Download Module
-module "nexus_s3_download" {
-  source = "./nexus_s3_download_module" # Replace with the actual module source
 
-  aws_region   = "us-east-1"
-  nexus_url    = "https://your-nexus-url/your-file.zip" # URL of the file in Nexus
-  local_path   = "/path/to/local/downloaded/file.zip" //s3 folder
+resource "aws_lambda_function" "example_lambda" {
+  function_name = "client-provided-function-name"
+  handler      = "client-provided-handler"
+  runtime      = "java17"  # Runtime: Java 17
+  memory_size  = 512       # Memory: 512 MB
+  timeout      = 900       # Timeout: 15 minutes (900 seconds)
+
+  # Layers
+  layers = [
+    "arn:aws:lambda:us-east-1:123456789012:layer:em-thirdparty-layer:12",
+    "arn:aws:lambda:us-east-1:123456789012:layer:em-services-common-layer:22",
+  ]
+
+  # Kinesis Trigger
+  event_source_token = aws_kinesis_stream.example_stream.arn  # Assuming you have defined the Kinesis Stream
+
+  # Logs and Metrics
+  tracing_config {
+    mode = "PassThrough"  # Active tracing: Not enabled
+  }
+
+  environment {
+    variables = {
+      ENABLE_ENHANCED_MONITORING = "false"
+      ENABLE_CODE_PROFILING     = "false"
+    }
+  }
+
+  # Asynchronous Invocation
+  maximum_event_age_in_seconds = 21600  # Maximum age of event is 6 hours
+  destination_config {
+    onFailure = "DestinationArn"
+  }
 }
 
 resource "aws_s3_bucket_object" "nexus_to_s3_upload" {
@@ -81,12 +71,4 @@ resource "aws_s3_bucket_object" "nexus_to_s3_upload" {
 
   # ACL can be configured according to your requirements
   # acl = "private"
-}
-# Step 5: AWS Kinesis Section (Optional)
-resource "aws_kinesis_stream" "example_stream" {
-  name        = "example-stream"
-  shard_count = 1
-
-  # Configure the Kinesis stream as needed
-  # ...
 }
