@@ -32,7 +32,7 @@ resource "aws_kinesis_stream" "example_stream" {
 
 resource "aws_lambda_function" "example_lambda" {
   function_name = "client-provided-function-name"
-  handler      = "client-provided-handler"
+  handler      = "com.example.MyLambdaFunction::handleRequest"
   runtime      = "java17"  # Runtime: Java 17
   memory_size  = 512       # Memory: 512 MB
   timeout      = 900       # Timeout: 15 minutes (900 seconds)
