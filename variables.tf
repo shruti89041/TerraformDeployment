@@ -10,22 +10,27 @@ variable "env_alias" {
   default     = "v4"
 }
 
-variable "nexus_url" {
-  description = "The URL of the file in Nexus."
-  type        = string
-}
-
 variable "s3_bucket_name" {
-  description = "The name of the S3 bucket."
+  description = "The name of the S3 bucket where the object will be uploaded."
   type        = string
 }
 
-variable "s3_object_prefix" {
-  description = "The object key prefix in the S3 bucket."
+variable "s3_object_key_prefix" {
+  description = "The prefix for the object key in the S3 bucket."
   type        = string
 }
 
-variable "local_download_path" {
-  description = "Local path to save the downloaded file."
+variable "nexus_url" {
+  description = "The URL of the Nexus file to download."
+  type        = string
+}
+
+variable "function_name" {
+  description = "The name of the AWS Lambda function."
+  type        = string
+}
+
+variable "handler" {
+  description = "The Lambda function handler."
   type        = string
 }
