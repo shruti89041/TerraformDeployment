@@ -1,3 +1,28 @@
+variable "stream_name" {
+  type        = string
+  description = "The name of the Kinesis stream."
+}
+
+variable "shard_count" {
+  type        = number
+  description = "The number of shards for the Kinesis stream."
+}
+
+variable "bucket_name" {
+  type        = string
+  description = "The name of the S3 bucket."
+}
+
+variable "object_key" {
+  type        = string
+  description = "The object key in the S3 bucket."
+}
+
+variable "source_url" {
+  type        = string
+  description = "The URL of the source file."
+}
+
 variable "function_name" {
   type        = string
   description = "The name of the Lambda function."
@@ -36,29 +61,4 @@ variable "layers" {
 variable "environment" {
   type        = map(string)
   description = "Environment variables for the Lambda function."
-}
-
-variable "stream_name" {
-  type        = string
-  description = "The name of the Kinesis stream."
-}
-
-variable "shard_count" {
-  type        = number
-  description = "The number of shards for the Kinesis stream."
-}
-
-variable "bucket_name" {
-  type        = string
-  description = "The name of the S3 bucket."
-}
-
-variable "object_key" {
-  type        = string
-  description = "The object key in the S3 bucket."
-}
-
-variable "source_url" {
-  type        = string
-  description = "The URL of the source file."
 }
