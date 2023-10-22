@@ -1,22 +1,9 @@
-# Step 1: IAM Role Section
-resource "aws_iam_role" "lambda_exec_role" {
-  name = "lambda-exec-role"
+module "iam_role" {
+  source = "./modules/iam-role"  # Use the path to your IAM role module
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = "sts:AssumeRole",
-        Effect = "Allow",
-        Principal = {
-          Service = "lambda.amazonaws.com"
-        }
-      }
-    ]
-  })
-
-  # Attach inline policies or managed policies here as needed
-  # ...
+  # Pass variables needed by the IAM role module
+  role_name = "lambda-exec-role"
+  # Other input variables if needed
 }
 
 resource "aws_kinesis_stream" "example_stream" {
