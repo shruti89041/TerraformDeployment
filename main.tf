@@ -13,6 +13,9 @@ module "kinesis_stream" {
   shard_count = 1
 }
 
+output "kinesis_stream_arn" {
+  value = aws_kinesis_stream.example_stream.arn
+}
 
 module "s3_bucket_object" {
   source = "./modules/s3-bucket-object-module"  # Use the correct path to your S3 bucket object module
@@ -53,13 +56,13 @@ module "lambda_module" {
   s3_object_key = "your/object/key-prefix/ics.zip"
   nexus_file_url = "https://your-nexus-url/ics.zip"
 
-  kinesis_stream = aws_kinesis_stream.example_stream
+  kinesis_stream = module.kinesis_stream.kinesis_stream_arn
 }
 
 module "lambda_event_source_mapping" {
   source = "./modules/lambda-event-source-module"  # Use the correct path to your Lambda event module
 
-  event_source_arn  = module.kinesis_stream.arn
+  event_source_arn  = module.kinesis_stream.kinesis_stream.arn
   function_name     = module.lambda_module.function_name
   batch_size        = 100
   starting_position = "LATEST"
