@@ -14,7 +14,7 @@ module "kinesis_stream" {
 }
 
 output "kinesis_stream_arn" {
-  value = aws_kinesis_stream.example_stream.arn
+  value = module.kinesis_stream.kinesis_stream.arn
 }
 
 module "s3_bucket_object" {
@@ -56,7 +56,7 @@ module "lambda_module" {
   s3_object_key = "your/object/key-prefix/ics.zip"
   nexus_file_url = "https://your-nexus-url/ics.zip"
 
-  kinesis_stream = module.kinesis_stream.kinesis_stream_arn
+  kinesis_stream = module.kinesis_stream_arn
 }
 
 module "lambda_event_source_mapping" {
