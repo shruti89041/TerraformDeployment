@@ -47,3 +47,18 @@ variable "shard_count" {
   type        = number
   description = "The number of shards for the Kinesis stream."
 }
+
+variable "bucket_name" {
+  type        = string
+  description = "The name of the S3 bucket."
+}
+
+variable "object_key" {
+  type        = string
+  description = "The object key in the S3 bucket."
+}
+
+variable "source_url" {
+  type        = string
+  description = "The URL of the source file."
+}
