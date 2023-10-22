@@ -37,3 +37,13 @@ variable "environment" {
   type        = map(string)
   description = "Environment variables for the Lambda function."
 }
+
+variable "stream_name" {
+  type        = string
+  description = "The name of the Kinesis stream."
+}
+
+variable "shard_count" {
+  type        = number
+  description = "The number of shards for the Kinesis stream."
+}
