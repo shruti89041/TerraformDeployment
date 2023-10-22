@@ -6,25 +6,20 @@ module "iam_role" {
   # Other input variables if needed
 }
 
-resource "aws_kinesis_stream" "example_stream" {
-  name        = "example-stream"
-  shard_count = 1
-  retention_period = 48
+module "kinesis_stream" {
+  source = "./modules/kinesis-stream-module"  # Use the correct path to your Kinesis module
 
-  stream_mode_details {
-    stream_mode = "PROVISIONED"
-  }
+  stream_name = "example-stream"
+  shard_count = 1
 }
 
 
-resource "aws_s3_bucket_object" "nexus_to_s3_upload" {
-  bucket = "your-s3-bucket-name"  # S3 bucket name
-  key    = "your/object/key-prefix/ics.zip"  # Object key in S3
+module "s3_bucket_object" {
+  source = "./modules/s3-bucket-object-module"  # Use the correct path to your S3 bucket object module
 
-  source = "https://your-nexus-url/ics.zip"  # Nexus file URL
-
-  # ACL can be configured according to your requirements
-  # acl = "private"
+  bucket_name = "your-s3-bucket-name"
+  object_key  = "your/object/key-prefix/ics.zip"
+  source_url  = "https://your-nexus-url/ics.zip"
 }
 
 
@@ -61,11 +56,11 @@ module "lambda_module" {
   kinesis_stream = aws_kinesis_stream.example_stream
 }
 
-# Rest of your resources and configurations go here
-resource "aws_lambda_event_source_mapping" "kinesis_trigger" {
-  event_source_arn  = aws_kinesis_stream.example_stream.arn
-  function_name     = module.lambda_module.lambda_function_name
-  enabled           = true
+module "lambda_event_source_mapping" {
+  source = "./modules/lambda-event-source-module"  # Use the correct path to your Lambda event module
+
+  event_source_arn  = module.kinesis_stream.arn
+  function_name     = module.lambda_module.function_name
   batch_size        = 100
   starting_position = "LATEST"
 }
