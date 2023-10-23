@@ -1,10 +1,15 @@
-module "iam_role" {
-  source = "./modules/iam-role"  # Use the path to your IAM role module
-
-  # Pass variables needed by the IAM role module
-  role_name = "lambda-exec-role"
-  # Other input variables if needed
+module "jenkins_role" {
+  source       = "./iam-role-module"  # Replace with the correct module source
+  role_name    = "jenkins-role"
+  policy_arns  = [
+    "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
+    "arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess",
+    "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess",
+    "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess",
+  ]
 }
+
+
 
 module "kinesis_stream" {
   source = "./modules/kinesis-stream-module"  # Use the correct path to your Kinesis module
